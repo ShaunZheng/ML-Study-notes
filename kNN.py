@@ -38,13 +38,13 @@ def file2matrix(filename):
 		returnMat[index,:] = listFromLine[0:3]
 		classLabelVector.append(int(listFromLine[-1]))
 		index += 1
-	print returnMat
-	print classLabelVector
+	# print returnMat
+	# print classLabelVector
 	return returnMat,classLabelVector
 
 datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
-print array(datingLabels)
-print 15.0*array(datingLabels)
+# print array(datingLabels)
+# print 15.0*array(datingLabels)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -58,3 +58,7 @@ plt.show()
 # ax = Axes3D(fig)
 # ax.scatter(datingDataMat[:,0],datingDataMat[:,1],datingDataMat[:,2],15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels))
 # plt.show()
+
+def autoNorm(dataSet):
+	minVals:dataSet.min(0)
+	maxVals:dataSet.max(0)
