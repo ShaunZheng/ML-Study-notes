@@ -38,13 +38,23 @@ def file2matrix(filename):
 		returnMat[index,:] = listFromLine[0:3]
 		classLabelVector.append(int(listFromLine[-1]))
 		index += 1
-	return returnMat,classLabelVector[0:20]
+	print returnMat
+	print classLabelVector
+	return returnMat,classLabelVector
 
 datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
- 
+print array(datingLabels)
+print 15.0*array(datingLabels)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-ax.scatter(datingDataMat[:,1],datingDataMat[:,2],1.0*array(datingLabels),15.0*array(datingLabels))
-plt.show()	
+ax.scatter(datingDataMat[:,0],datingDataMat[:,1],15.0*array(datingLabels),15.0*array(datingLabels))
+plt.show()
 
+# import numpy
+# from mpl_toolkits.mplot3d import Axes3D
+# datingDataMat,datingLabels=file2matrix('datingTestSet2.txt')
+# fig = plt.figure()
+# ax = Axes3D(fig)
+# ax.scatter(datingDataMat[:,0],datingDataMat[:,1],datingDataMat[:,2],15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels))
+# plt.show()
