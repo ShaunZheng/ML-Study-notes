@@ -43,6 +43,7 @@ def file2matrix(filename):
 	return returnMat,classLabelVector
 
 datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
+print datingDataMat
 # print array(datingLabels)
 # print 15.0*array(datingLabels)
 
@@ -60,5 +61,11 @@ plt.show()
 # plt.show()
 
 def autoNorm(dataSet):
-	minVals:dataSet.min(0)
-	maxVals:dataSet.max(0)
+	minVals=dataSet.min(0)
+	maxVals=dataSet.max(0)
+	ranges = maxVals - minVals
+	normDataSet = zeros(shape(dataSet))
+	m = dataSet.shape[0]
+	normDataSet = dataSet - tile(minVals,(m,1))
+	normDataSet = normDataSet/tile(ranges,(m,1))
+	return normDataSet, ranges, minVals
