@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 from numpy import *
-
+from os import listdir
 import operator
 import matplotlib
 import matplotlib.pyplot as plt
@@ -73,6 +73,7 @@ def file2matrix(filename):
 # ax.scatter(datingDataMat[:,0],datingDataMat[:,1],datingDataMat[:,2],15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels),15.0*numpy.array(datingLabels))
 # plt.show()
 
+# 对特征值进行归一化
 def autoNorm(dataSet):
 	minVals=dataSet.min(0)
 	maxVals=dataSet.max(0)
@@ -110,4 +111,56 @@ def classifyPerson():
 	classifierResult = classify0((inArr-minVals)/ranges,normMat,datingLabels,3)
 	print '你可能对此人的喜欢程度为：',resultList[classifierResult - 1]
 
-classifyPerson()
+# classifyPerson()
+
+def img2vector(filename):
+	returnVect = zeros((1,1024))
+	fr = open(filename)
+	for i in range(32):
+		# 注意readline和readlines的区别，前者直接读出，后者有换行符号等.q前者只读一行，后者一次性读完所有行。
+		lineStr = fr.readline()
+		for j in range(32):
+			# 这里就很精妙，i控制行数，j控制列元素，得到一个1024长的array
+			returnVect[0,32*i+j] = int(lineStr[j])
+	# print lineStr
+	return returnVect
+# print type(img2vector('testDigits/0_13.txt'))
+# print img2vector('testDigits/0_13.txt')[0,0:31]
+
+def handwritingClassTest():
+	hwLabels = []
+	# trainingDigits为当目录下的一个文件夹，此处遍历该文件夹下的所有的文件名
+	trainingFileList = listdir('trainingDigits')
+	m = len(trainingFileList)
+	trainingMat = zeros((m,1024))
+	for i in range(m):
+		fileNameStr = trainingFileList[i]
+		# 通过‘.’号，对文件名进行分割，通过[0],实现只取list中的第一个，也就是把.txt给剔除了
+		fileStr = fileNameStr.split('.')[0]
+		# 同理，取得文件名如0_132的前面的数字0
+		classNumStr = int(fileStr.split('_')[0])
+		hwLabels.append(classNumStr)
+		trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
+
+	testFileList = listdir('testDigits')
+	errorCount = 0.0
+	mTest = len(testFileList)
+	for i in range(mTest):
+		fileNameStr = testFileList[i]
+		fileStr = fileNameStr.split('.')[0]
+		classNumStr = int(fileStr.split('_')[0])
+		vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
+		classifierResult = classify0(vectorUnderTest,trainingMat,hwLabels,3)
+		print '分类结果：%d,真实值：%d' %(classifierResult,classNumStr)
+		if (classifierResult != classNumStr):
+			errorCount += 1.0
+	print '总的分类错误数为：%d' % errorCount
+	print '分类错误率为：%f' % (errorCount/float(mTest))
+		# print hwLabels
+		# print fileStr
+		# print type(fileStr)
+		# print hwLabels
+
+		# print trainingFileList
+
+handwritingClassTest()

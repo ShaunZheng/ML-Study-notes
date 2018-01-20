@@ -1,4 +1,3 @@
-
 # from numpy import *
 
 # a = ['\taa\nbb\tccc\t\r\n','\taa\nbb\tccc\t\r\n']
@@ -43,3 +42,9 @@
 # print(a.max(0))
 
 
+fr = open('datingTestSet.txt')
+for x in range(10):
+	# fr = open('datingTestSet.txt')
+	lineStr = fr.readline()
+	print lineStr
+	print type(lineStr)
