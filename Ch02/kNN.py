@@ -1,3 +1,4 @@
+# -*-coding:utf-8-*-
 from numpy import *
 
 import operator
@@ -53,16 +54,17 @@ def file2matrix(filename):
 	# print classLabelVector
 	return returnMat,classLabelVector
 
-datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
-print datingDataMat
+# datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
+# print datingDataMat
 # print array(datingLabels)
 # print 15.0*array(datingLabels)
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.scatter(datingDataMat[:,0],datingDataMat[:,1],15.0*array(datingLabels),15.0*array(datingLabels))
-plt.show()
+# fig = plt.figure()
+# ax = fig.add_subplot(111)
+# ax.scatter(datingDataMat[:,0],datingDataMat[:,1],15.0*array(datingLabels),15.0*array(datingLabels))
+# plt.show()
 
+# 3d图绘制
 # import numpy
 # from mpl_toolkits.mplot3d import Axes3D
 # datingDataMat,datingLabels=file2matrix('datingTestSet2.txt')
@@ -80,3 +82,32 @@ def autoNorm(dataSet):
 	normDataSet = dataSet - tile(minVals,(m,1))
 	normDataSet = normDataSet/tile(ranges,(m,1))
 	return normDataSet, ranges, minVals
+
+def datingClassTest():
+	hoRatio = 0.050
+	datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
+	normMat,ranges,minVals = autoNorm(datingDataMat)
+	m = normMat.shape[0]
+	numTestVecs = int(m*hoRatio)
+	errorCount = 0.0
+	for i in range(numTestVecs):
+		classifierResult = classify0(normMat[i,:],normMat[numTestVecs:m,:],datingLabels[numTestVecs:m],6)
+		print "分类结果：%d,真实值：%d" % (classifierResult,datingLabels[i])
+		if (classifierResult != datingLabels[i]): errorCount +=1.0
+	print "错误率 :%f" % (errorCount/float(numTestVecs))
+	print "错误个数：%d" % errorCount
+
+# datingClassTest()
+
+def classifyPerson():
+	resultList = ['一点也不喜欢','有点喜欢','相当喜欢']
+	percentTags = float(raw_input('玩游戏的时间百分比?'))
+	ffMiles = float(raw_input('每年的飞行里程？'))
+	iceCream = float(raw_input('每年干掉的冰淇淋（升）？'))
+	datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
+	normMat,ranges,minVals = autoNorm(datingDataMat)
+	inArr = array([ffMiles,percentTags,iceCream])
+	classifierResult = classify0((inArr-minVals)/ranges,normMat,datingLabels,3)
+	print '你可能对此人的喜欢程度为：',resultList[classifierResult - 1]
+
+classifyPerson()
