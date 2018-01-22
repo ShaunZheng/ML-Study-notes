@@ -46,6 +46,7 @@ def splitDataSet(dataSet,axis,value):
 			# 追加到数组retDataSet中
 			retDataSet.append(reduceFeatVec)
 	return retDataSet
+	
 # 选择最好的最好的划分特征
 def chooseBestFeatureToSplit(dataSet):
 	# 
