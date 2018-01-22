@@ -1,23 +1,23 @@
 # -*-coding:utf-8-*-
 from math import log
-
+# 计算给定数据集的香农熵
 def calcShannonEnt(dataSet):
 	numEntries = len(dataSet)
 	labelsCounts = {}
 	for featVec in dataSet:
 		# print featVec
 		currentLabel = featVec[-1]
-		print currentLabel
+		# print currentLabel
 		if currentLabel not in labelsCounts.keys():
 			labelsCounts[currentLabel] = 1
 		else:
 			labelsCounts[currentLabel] +=1
 		# print labelsCounts
 		# labelsCounts[currentLabel] += 1
-		print labelsCounts
+		# print labelsCounts
 	shannoEnt = 0.0
 	for key in labelsCounts:
-		print key
+		# print key
 		prob = float(labelsCounts[key])/numEntries
 		shannoEnt -= prob * log(prob,2)
 	return shannoEnt
@@ -46,10 +46,56 @@ def splitDataSet(dataSet,axis,value):
 			# 追加到数组retDataSet中
 			retDataSet.append(reduceFeatVec)
 	return retDataSet
+# 选择最好的最好的划分特征
+def chooseBestFeatureToSplit(dataSet):
+	# 
+	numFeatures = len(dataSet[0]) - 1
+	# 计算给定数据集的香农熵
+	baseEntryopy = calcShannonEnt(dataSet)
+	bestInfoGain = 0.0
+	bestFeature = -1
+	for i in range(numFeatures):
+		# 列表生成式：得到每个example的第i列的值，得到一个数组
+		featList = [example[i] for example in dataSet]
+		print featList
+		# set()方法，将重复值合并，如12123->123
+		uniqueVals = set(featList)
+		# print uniqueVals
+		newEntropy = 0.0
+		for value in uniqueVals:
+			subDataSet = splitDataSet(dataSet, i, value)
+			prob = len(subDataSet)/float(len(dataSet))
+			newEntropy += prob * calcShannonEnt(subDataSet)
+		# print newEntropy
+		# 信息增益
+		infoGain = baseEntryopy - newEntropy
+		if (infoGain > bestInfoGain):
+			bestInfoGain = infoGain
+			bestFeature = i
+	print newEntropy
+	return bestFeature
+		
 
 myDat,labels = createDataSet()
 
-# print myDat
+print 'myDat=>',myDat
+print 'myDat[0]=>', len(myDat[0])
 # print calcShannonEnt(myDat)
 
-print splitDataSet(myDat,1,1)
+print 'splitDataSet(myDat,1,1)=>',splitDataSet(myDat,1,1)
+
+test0 = chooseBestFeatureToSplit(myDat)
+print '最好的划分特征是：',test0
+
+# for i in xrange(3):
+# 	x = [example[i] for example in myDat]
+# 	print x
+
+# 得到出现次数最多的分类名称
+def majorityCnt(classList):
+	classCount = {}
+	for vote in classList:
+		if vote not in classCount.keys:
+			classCount[vote] += 1
+	sortedClassCount = sorted(classCount.iteritems(),key = operator.iteritems(1),reverse = True)
+	return sortedClassCount
