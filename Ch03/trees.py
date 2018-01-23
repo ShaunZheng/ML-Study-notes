@@ -26,7 +26,7 @@ def createDataSet():
 	dataSet = [[1,1,'yes'],[1,1,'yes'],[1,0,'no'],[0,1,'no'],[0,1,'no']]
 	labels = ['no surfacing','flippers']
 	return dataSet,labels
-
+# print createDataSet()
 # 这个函数的功能是：讲第axis列的值和value比较，相同，则拿到除了axis列的数组，追加到retDataSet数组中
 def splitDataSet(dataSet,axis,value):
 	retDataSet = []
@@ -87,8 +87,8 @@ print 'myDat[0]=>', len(myDat[0])
 
 print 'splitDataSet(myDat,1,1)=>',splitDataSet(myDat,1,1)
 
-test0 = chooseBestFeatureToSplit(myDat)
-print '最好的划分特征是：',test0
+# test0 = chooseBestFeatureToSplit(myDat)
+# print '最好的划分特征是：',test0
 
 # for i in xrange(3):
 # 	x = [example[i] for example in myDat]
@@ -98,7 +98,41 @@ print '最好的划分特征是：',test0
 def majorityCnt(classList):
 	classCount = {}
 	for vote in classList:
-		if vote not in classCount.keys:
-			classCount[vote] += 1
+		if vote not in classCount.keys():
+			classCount[vote] = 0
+		classCount[vote] += 1
 	sortedClassCount = sorted(classCount.iteritems(),key = operator.iteritems(1),reverse = True)
-	return sortedClassCount
+	return sortedClassCount[0][0]
+print "=====>",labels
+def createTree(dataSet,labels):
+	print "=====",labels
+	classList = [example[-1] for example in dataSet]
+	# 如果类别完全相同，则不需要划分
+	if classList.count(classList[0]) == len(classList):
+		return classList[0]
+	# 如果每行只有一个元素，那么这个元素必然是目标变量，也就是类别了。
+	# 这时，哪个类别多，它就分为哪一类！
+	if len(dataSet[0]) == 1:
+		return majorityCnt(classList)
+	# 找到最好划分方式的特征轴
+	bestFeat = chooseBestFeatureToSplit(dataSet)
+	print labels[0]
+	print "bestFeat=>",bestFeat
+	# 
+	bestFeatLabel = labels[0]
+	print bestFeatLabel
+	myTree = {bestFeatLabel : {}}
+	del(labels[bestFeat])
+	# 得到划分那一轴的所有属性值
+	featValues = [example[bestFeat] for example in dataSet]
+	uniqueVals = set(featValues)
+	for value in uniqueVals:
+		subLabels = labels[:]
+		print "==========================",subLabels
+		print subLabels
+		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
+	# print myTree
+	return myTree
+print(createTree(myDat, labels))
+print "=====>",labels
+print labels
