@@ -172,26 +172,54 @@ def createDataSet():
 	dataSet = [[1,1,'yes'],[1,1,'yes'],[1,0,'no'],[0,1,'no'],[0,1,'no']]
 	labels = ['no surfacing','flippers']
 	return dataSet,labels
-# 通过递归方法，创造一个树
+
+'''
+五、使用递归，建立一棵树：
+
+1.如果都是一类，那么直接返回；
+
+2.如果用完了所有的特征，还没能分类，这时候只有多个目标变量了。那么根据目标变量的种类的数目，最多的作为类别的返回值；
+
+3.使用字典存储树，利用递归，网字典里存，直到结束。
+
+'''
 def createTree(dataSet,labels):
-	# print labels
 	classList = [example[-1] for example in dataSet]
-	if classList.count(classList[0]) == len(classList):
+	if len(set(classList)) == 1:
 		return classList[0]
 	if len(dataSet[0]) == 1:
 		return majorityCnt(classList)
 	bestFeat = chooseBestFeatureToSplit(dataSet)
+	# print "bestFeat===>",bestFeat
 	bestFeatLabel = labels[bestFeat]
-	# print bestFeatLabel
-	# print type(bestFeatLabel)
-	myTree = {bestFeatLabel : {}}
+	myTree = {bestFeatLabel:{}}
 	del(labels[bestFeat])
 	featValues = [example[bestFeat] for example in dataSet]
 	uniqueVals = set(featValues)
 	for value in uniqueVals:
 		subLabels = labels[:]
-		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
+		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value),subLabels)
 	return myTree
+
+# def createTree(dataSet,labels):
+# 	# print labels
+# 	classList = [example[-1] for example in dataSet]
+# 	if classList.count(classList[0]) == len(classList):
+# 		return classList[0]
+# 	if len(dataSet[0]) == 1:
+# 		return majorityCnt(classList)
+# 	bestFeat = chooseBestFeatureToSplit(dataSet)
+# 	bestFeatLabel = labels[bestFeat]
+# 	# print bestFeatLabel
+# 	# print type(bestFeatLabel)
+# 	myTree = {bestFeatLabel : {}}
+# 	del(labels[bestFeat])
+# 	featValues = [example[bestFeat] for example in dataSet]
+# 	uniqueVals = set(featValues)
+# 	for value in uniqueVals:
+# 		subLabels = labels[:]
+# 		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
+# 	return myTree
 
 
 
