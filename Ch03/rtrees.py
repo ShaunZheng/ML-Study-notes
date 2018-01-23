@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 from math import log
-
+import operator
 
 dataSet = [[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
 '''
@@ -117,11 +117,66 @@ def chooseBestFeatureToSlipt(dataSet):
 			bestAxis = i
 	print bestAxis
 	return bestAxis
+
+'''
+四、定义函数，求出现次数最多的分类的名称
+
+1. 传入所有的类别列表值；
+
+2.找出数量最多的那一类；
+
+3.自己的代码，显然健壮性不够好：
 		
+def majorityCnt(classList):
+	countDic = {}
+	classSet = set(classList)
+	for key in classSet:
+		count = 0
+		for i in range(len(classList)):
+			if classList[i] == key:
+				count =count + 1
+				countDic[key] = count
+	if countDic["yes"] > countDic["no"]:
+		sortedClassCount = "yes"
+	else:
+		sortedClassCount = "no"
+	return sortedClassCount
+'''
+# My method
+# 改进版：
+classList = [i[-1] for i in dataSet]
+print classList
+def majorityCnt(classList):
+	countDic = {}
+	classSet = set(classList)
+	for key in classSet:
+		countDic[key] = 0
+		for i in range(len(classList)):
+			if classList[i] == key:
+				countDic[key] += 1
+	sortedClassCount = sorted(countDic.iteritems(),key=operator.itemgetter(1),reverse = True)
+	return sortedClassCount[0][0]		
+# 官方代码：
+# def majorityCnt(classList):
+# 	classCount = {}
+# 	for vote in classList:
+# 		if vote not in classCount.keys(): 
+# 			classCount[vote]=0
+# 		classCount[vote] += 1
+# 	sortedClassCount = sorted(classCount.iteritems(),key = operator.itemgetter(1),reverse = True)
+# 	print sortedClassCount[0][0]
+# 	return sortedClassCount[0][0]
 
 
 
 
 
-print splitDataSet(dataSet,0,0)
-chooseBestFeatureToSlipt(dataSet)
+
+
+
+
+
+
+# majorityCnt(classList)
+# print splitDataSet(dataSet,0,0)
+# chooseBestFeatureToSlipt(dataSet)
