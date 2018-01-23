@@ -103,9 +103,8 @@ def majorityCnt(classList):
 		classCount[vote] += 1
 	sortedClassCount = sorted(classCount.iteritems(),key = operator.iteritems(1),reverse = True)
 	return sortedClassCount[0][0]
-print "=====>",labels
+
 def createTree(dataSet,labels):
-	print "=====",labels
 	classList = [example[-1] for example in dataSet]
 	# 如果类别完全相同，则不需要划分
 	if classList.count(classList[0]) == len(classList):
@@ -117,7 +116,6 @@ def createTree(dataSet,labels):
 	# 找到最好划分方式的特征轴
 	bestFeat = chooseBestFeatureToSplit(dataSet)
 	print labels[0]
-	print "bestFeat=>",bestFeat
 	# 
 	bestFeatLabel = labels[0]
 	print bestFeatLabel
@@ -128,11 +126,7 @@ def createTree(dataSet,labels):
 	uniqueVals = set(featValues)
 	for value in uniqueVals:
 		subLabels = labels[:]
-		print "==========================",subLabels
-		print subLabels
 		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
 	# print myTree
 	return myTree
 print(createTree(myDat, labels))
-print "=====>",labels
-print labels
