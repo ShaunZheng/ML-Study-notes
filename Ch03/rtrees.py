@@ -28,12 +28,18 @@ def calcShannonEnt(dataSet):
 			countN += 1
 	pY = float(countY)/numAll
 	pN = float(countN)/numAll
-	infoY = -log(pY,2)
-	infoN = -log(pN,2)
-	shannonEnt = pY*infoY + pN*infoN
+	infoN =0
+	infoY =0
+	if pY == 0:
+		shannonEnt = pN*infoN
+	if pN == 0:
+		shannonEnt = pY*infoY
+	if pY != 0 and pN != 0:
+		infoY = -log(pY,2)
+		infoN = -log(pN,2)
+		shannonEnt = pY*infoY + pN*infoN
 	return shannonEnt
 print calcShannonEnt(dataSet)
-
 '''
 二、划分数据集
 
@@ -69,4 +75,53 @@ def splitDataSet(dataSet,axis,value):
 			retDataSet.append(reduceFR)		
 	return retDataSet
 
-print splitDataSet(dataSet,0,1)
+'''
+三、选择最好的数据集划分方式：（也就是求信息增益，同时排序，找到增益最大的）
+
+1.根据轴axis，选择不同的划分方式；
+
+2.在一次划分中 ，可能会将当前轴，根据值的不同，划分成多个数据集；
+（相当于根据某个特征，进行树分叉，得到多个子节点）
+
+3.对产生的每个数据集进行香农熵计算；
+
+4.对香农熵求均值；
+
+5.计算信息增益；
+
+6.找到最大增益，同时得到其是那哪个轴划分的。
+
+'''
+def chooseBestFeatureToSlipt(dataSet):
+	numAxis = len(dataSet[0]) - 1
+	# 程序的信息增益小于0时，设置bestAxis为-1，表示出错。
+	bestAxis = -1
+	bestInfoGain = 0.0
+	
+	for i in  range(numAxis):
+		axisFeatures = [feature[i] for feature in dataSet]
+		print axisFeatures
+		values = set(axisFeatures)
+		print values
+		sumChildEnt = 0.0
+		for value in values:
+			childDataSet = splitDataSet(dataSet, i, value)
+			print childDataSet
+			childEntropy = calcShannonEnt(childDataSet)
+			print childEntropy
+			pValue = float(len(childDataSet))/len(dataSet)
+			sumChildEnt += pValue*childEntropy 
+		infoGain = calcShannonEnt(dataSet) - sumChildEnt
+		if (infoGain > bestInfoGain):
+			bestInfoGain = infoGain
+			bestAxis = i
+	print bestAxis
+	return bestAxis
+		
+
+
+
+
+
+print splitDataSet(dataSet,0,0)
+chooseBestFeatureToSlipt(dataSet)

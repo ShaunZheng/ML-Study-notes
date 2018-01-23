@@ -46,12 +46,13 @@ def splitDataSet(dataSet,axis,value):
 			# 追加到数组retDataSet中
 			retDataSet.append(reduceFeatVec)
 	return retDataSet
-	
+
 # 选择最好的最好的划分特征
 def chooseBestFeatureToSplit(dataSet):
-	# 
+	#  计算除去目标变量，有几个特征
 	numFeatures = len(dataSet[0]) - 1
-	# 计算给定数据集的香农熵
+	print "numFeatures:",numFeatures
+	# 计算给定数据集的香农熵Ent(D)
 	baseEntryopy = calcShannonEnt(dataSet)
 	bestInfoGain = 0.0
 	bestFeature = -1
@@ -61,13 +62,14 @@ def chooseBestFeatureToSplit(dataSet):
 		print featList
 		# set()方法，将重复值合并，如12123->123
 		uniqueVals = set(featList)
-		# print uniqueVals
+		print uniqueVals
 		newEntropy = 0.0
 		for value in uniqueVals:
 			subDataSet = splitDataSet(dataSet, i, value)
+			print "subDataSet:",subDataSet
 			prob = len(subDataSet)/float(len(dataSet))
 			newEntropy += prob * calcShannonEnt(subDataSet)
-		# print newEntropy
+			print "calcShannonEnt(subDataSet)",calcShannonEnt(subDataSet)
 		# 信息增益
 		infoGain = baseEntryopy - newEntropy
 		if (infoGain > bestInfoGain):
