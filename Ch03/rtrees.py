@@ -39,7 +39,7 @@ def calcShannonEnt(dataSet):
 		infoN = -log(pN,2)
 		shannonEnt = pY*infoY + pN*infoN
 	return shannonEnt
-print calcShannonEnt(dataSet)
+# print calcShannonEnt(dataSet)
 '''
 二、划分数据集
 
@@ -92,7 +92,7 @@ def splitDataSet(dataSet,axis,value):
 6.找到最大增益，同时得到其是那哪个轴划分的。
 
 '''
-def chooseBestFeatureToSlipt(dataSet):
+def chooseBestFeatureToSplit(dataSet):
 	numAxis = len(dataSet[0]) - 1
 	# 程序的信息增益小于0时，设置bestAxis为-1，表示出错。
 	bestAxis = -1
@@ -100,22 +100,22 @@ def chooseBestFeatureToSlipt(dataSet):
 	
 	for i in  range(numAxis):
 		axisFeatures = [feature[i] for feature in dataSet]
-		print axisFeatures
+		# print axisFeatures
 		values = set(axisFeatures)
-		print values
+		# print values
 		sumChildEnt = 0.0
 		for value in values:
 			childDataSet = splitDataSet(dataSet, i, value)
-			print childDataSet
+			# print childDataSet
 			childEntropy = calcShannonEnt(childDataSet)
-			print childEntropy
+			# print childEntropy
 			pValue = float(len(childDataSet))/len(dataSet)
 			sumChildEnt += pValue*childEntropy 
 		infoGain = calcShannonEnt(dataSet) - sumChildEnt
 		if (infoGain > bestInfoGain):
 			bestInfoGain = infoGain
 			bestAxis = i
-	print bestAxis
+	# print bestAxis
 	return bestAxis
 
 '''
@@ -145,7 +145,7 @@ def majorityCnt(classList):
 # My method
 # 改进版：
 classList = [i[-1] for i in dataSet]
-print classList
+# print classList
 def majorityCnt(classList):
 	countDic = {}
 	classSet = set(classList)
@@ -167,16 +167,42 @@ def majorityCnt(classList):
 # 	print sortedClassCount[0][0]
 # 	return sortedClassCount[0][0]
 
+# 构造一个数据集
+def createDataSet():
+	dataSet = [[1,1,'yes'],[1,1,'yes'],[1,0,'no'],[0,1,'no'],[0,1,'no']]
+	labels = ['no surfacing','flippers']
+	return dataSet,labels
+# 通过递归方法，创造一个树
+def createTree(dataSet,labels):
+	# print labels
+	classList = [example[-1] for example in dataSet]
+	if classList.count(classList[0]) == len(classList):
+		return classList[0]
+	if len(dataSet[0]) == 1:
+		return majorityCnt(classList)
+	bestFeat = chooseBestFeatureToSplit(dataSet)
+	bestFeatLabel = labels[bestFeat]
+	# print bestFeatLabel
+	# print type(bestFeatLabel)
+	myTree = {bestFeatLabel : {}}
+	del(labels[bestFeat])
+	featValues = [example[bestFeat] for example in dataSet]
+	uniqueVals = set(featValues)
+	for value in uniqueVals:
+		subLabels = labels[:]
+		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
+	return myTree
 
 
 
+dataSet,labels = createDataSet()
+print createTree(dataSet, labels)
 
 
-
-
-
-
-
+# print createDataSet()
+# print chooseBestFeatureToSlipt(dataSet)
+# print createDataSet()
 # majorityCnt(classList)
-# print splitDataSet(dataSet,0,0)
+print splitDataSet(dataSet,0,0)
+print splitDataSet(dataSet,0,1)
 # chooseBestFeatureToSlipt(dataSet)
