@@ -1,5 +1,4 @@
 # -*-coding:utf-8-*-
-
 # 完美解决中文绘图乱码：
 from pylab import *  
 mpl.rcParams['font.sans-serif'] = ['SimHei']
