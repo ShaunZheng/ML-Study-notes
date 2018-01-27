@@ -46,10 +46,14 @@ def trainNB0(trainMatrix,trainCategory):
 	
 listOPosts,listClasses = lodaDataSet()
 myVocabList = createVocabList(listOPosts)
-Vec = setOfWords2Vec(myVocabList,listClasses)
+
 
 trainMat = []
 for postinDoc in listOPosts:
-	trainMat.append(Vec)
+	trainMat.append(setOfWords2Vec(myVocabList,postinDoc))
 
-trainNB0(trainMat,listClasses)
+p0V,p1V,pAb = trainNB0(trainMat,listClasses)
+
+print pAb
+print p0V
+print p1V
