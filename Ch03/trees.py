@@ -51,7 +51,7 @@ def splitDataSet(dataSet,axis,value):
 def chooseBestFeatureToSplit(dataSet):
 	#  计算除去目标变量，有几个特征
 	numFeatures = len(dataSet[0]) - 1
-	print "numFeatures:",numFeatures
+	# print "numFeatures:",numFeatures
 	# 计算给定数据集的香农熵Ent(D)
 	baseEntryopy = calcShannonEnt(dataSet)
 	bestInfoGain = 0.0
@@ -59,33 +59,32 @@ def chooseBestFeatureToSplit(dataSet):
 	for i in range(numFeatures):
 		# 列表生成式：得到每个example的第i列的值，得到一个数组
 		featList = [example[i] for example in dataSet]
-		print featList
+		# print featList
 		# set()方法，将重复值合并，如12123->123
 		uniqueVals = set(featList)
-		print uniqueVals
+		# print uniqueVals
 		newEntropy = 0.0
 		for value in uniqueVals:
 			subDataSet = splitDataSet(dataSet, i, value)
-			print "subDataSet:",subDataSet
+			# print "subDataSet:",subDataSet
 			prob = len(subDataSet)/float(len(dataSet))
 			newEntropy += prob * calcShannonEnt(subDataSet)
-			print "calcShannonEnt(subDataSet)",calcShannonEnt(subDataSet)
+			# print "calcShannonEnt(subDataSet)",calcShannonEnt(subDataSet)
 		# 信息增益
 		infoGain = baseEntryopy - newEntropy
 		if (infoGain > bestInfoGain):
 			bestInfoGain = infoGain
 			bestFeature = i
-	print newEntropy
+	# print newEntropy
 	return bestFeature
 		
 
-myDat,labels = createDataSet()
 
-print 'myDat=>',myDat
-print 'myDat[0]=>', len(myDat[0])
+
+# print 'myDat=>',myDat
+# print 'len myDat[0]=>', len(myDat[0])
 # print calcShannonEnt(myDat)
-
-print 'splitDataSet(myDat,1,1)=>',splitDataSet(myDat,1,1)
+# print 'splitDataSet(myDat,1,1)=>',splitDataSet(myDat,1,1)
 
 # test0 = chooseBestFeatureToSplit(myDat)
 # print '最好的划分特征是：',test0
@@ -103,6 +102,8 @@ def majorityCnt(classList):
 		classCount[vote] += 1
 	sortedClassCount = sorted(classCount.iteritems(),key = operator.iteritems(1),reverse = True)
 	return sortedClassCount[0][0]
+# 注意，这两个值在整个代码中定义了两次，应为下面这个函数会使得labels被删掉部分值
+myDat,labels = createDataSet()
 
 def createTree(dataSet,labels):
 	classList = [example[-1] for example in dataSet]
@@ -115,10 +116,10 @@ def createTree(dataSet,labels):
 		return majorityCnt(classList)
 	# 找到最好划分方式的特征轴
 	bestFeat = chooseBestFeatureToSplit(dataSet)
-	print labels[0]
+	# print labels[0]
 	# 
 	bestFeatLabel = labels[0]
-	print bestFeatLabel
+	# print bestFeatLabel
 	myTree = {bestFeatLabel : {}}
 	del(labels[bestFeat])
 	# 得到划分那一轴的所有属性值
@@ -129,4 +130,48 @@ def createTree(dataSet,labels):
 		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
 	# print myTree
 	return myTree
-print(createTree(myDat, labels))
+# print myTree
+
+
+myTree = createTree(myDat, labels)
+myDat,labels = createDataSet()
+def classify(inputTree,featLabels,testVec):
+	firstStr = inputTree.keys()[0]
+	print firstStr
+	secondDict = inputTree[firstStr]
+	print secondDict
+	featIndex = featLabels.index(firstStr)
+	print featIndex
+	for key in secondDict.keys():
+		if testVec[featIndex] == key:
+			if type(secondDict[key]).__name__=='dict':
+				classLabel = classify(secondDict[key],featLabels,testVec)
+			else:
+				classLabel = secondDict[key]
+	return classLabel
+
+# def classify(inputTree,featLabels,testVec):
+# 	firstStr = inputTree.keys()[0]
+# 	secondDict = inputTree[firstStr]
+# 	featIndex = featLabels.index(firstStr)
+# 	key = testVec[featIndex]
+# 	valueOfFeat = secondDict[key]
+# 	if isinstance(valueOfFeat, dict): 
+# 	    classLabel = classify(valueOfFeat, featLabels, testVec)
+# 	else: classLabel = valueOfFeat
+# 	return classLabel
+def storeTree(inputTree,filename):
+    import pickle
+    fw = open(filename,'w')
+    pickle.dump(inputTree,fw)
+    fw.close()
+    
+def grabTree(filename):
+    import pickle
+    fr = open(filename)
+    return pickle.load(fr)
+
+storeTree(myTree,'classifirStorage.txt')
+print grabTree('classifirStorage.txt')
+# print(classify(myTree,labels,[1,1]))
+	

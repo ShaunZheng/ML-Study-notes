@@ -2,7 +2,12 @@
 from math import log
 import operator
 
-dataSet = [[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
+# 构造一个数据集
+def createDataSet():
+	dataSet = [[1,1,'yes'],[1,1,'yes'],[1,0,'no'],[0,1,'no'],[0,1,'no']]
+	labels = ['no surfacing','flippers']
+	return dataSet,labels
+dataSet,labels = createDataSet()
 '''
 一、计算香农熵步骤：
 
@@ -167,11 +172,6 @@ def majorityCnt(classList):
 # 	print sortedClassCount[0][0]
 # 	return sortedClassCount[0][0]
 
-# 构造一个数据集
-def createDataSet():
-	dataSet = [[1,1,'yes'],[1,1,'yes'],[1,0,'no'],[0,1,'no'],[0,1,'no']]
-	labels = ['no surfacing','flippers']
-	return dataSet,labels
 
 '''
 五、使用递归，建立一棵树：
